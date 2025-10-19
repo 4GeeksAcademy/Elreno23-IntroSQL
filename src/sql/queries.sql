@@ -26,17 +26,17 @@ SELECT COUNT(region_id) FROM observations WHERE region_id = 2;
 
 
 -- MISSION 5;
-SELECT * FROM observations WHERE observation_date = "1998-08-08";
+SELECT COUNT(*) FROM observations WHERE observation_date = "1998-08-08";
 -- Your query here;
 
 
 -- MISSION 6;
-SELECT *, MAX(region_id) FROM observations;
+SELECT COUNT(*) AS total, region_id FROM observations GROUP BY region_id ORDER BY total DESC LIMIT 1;
 -- Your query here;
 
 
 -- MISSION 7;
-SELECT * FROM observations GROUP BY species_id ORDER BY count DESC LIMIT 5;
+SELECT COUNT(*) AS frecuency, species_id FROM observations GROUP BY species_id ORDER BY frecuency DESC LIMIT 5;
 -- Your query here;
 
 
@@ -45,7 +45,7 @@ SELECT species_id FROM observations GROUP BY species_id  HAVING COUNT(*) < 5;
 -- Your query here;
 
 --MISSION 9;
-SELECT observer, COUNT(*) FROM observations GROUP BY observer ORDER BY COUNT(count) DESC;
+SELECT observer, COUNT(*) AS total FROM observations GROUP BY observer ORDER BY total DESC;
 
 --MISSION 10;
 SELECT regions.name FROM observations INNER JOIN regions ON observations.region_id = regions.id;
@@ -61,8 +61,8 @@ SELECT
     species_by_city.total
 
 FROM (
-    --Subconsulta 1: species_by_city
-    --Agrupamos las observaciones por ciudad y especie, y contamos cuántas veces aparece cada especie.
+    Subconsulta 1: species_by_city
+    Agrupamos las observaciones por ciudad y especie, y contamos cuántas veces aparece cada especie.
     SELECT 
         regions.name AS city, 
         species.scientific_name, 
@@ -77,15 +77,15 @@ FROM (
 ) AS species_by_city 
 
 INNER JOIN (
-    --Subconsulta 2: max_species_by_city
-    --Calcula el máximo número de observaciones por especie en cada ciudad
+    Subconsulta 2: max_species_by_city
+    Calcula el máximo número de observaciones por especie en cada ciudad
 
     SELECT 
         city, 
         MAX(total) AS max_total
     FROM (
-        --Subconsulta 3: grouped
-        --Repite la lógica de species_by_city para alimentar el cálculo del máximo
+        Subconsulta 3: grouped
+        Repite la lógica de species_by_city para alimentar el cálculo del máximo
         SELECT 
             regions.name AS city, 
             species.scientific_name, 
@@ -103,8 +103,8 @@ INNER JOIN (
 ) AS max_species_by_city
 
 --Unión por ciudad y filtro por el máximo
-ON species_by_city.city = max_species_by_city.city
-WHERE species_by_city.total = max_species_by_city.max_total;
+--ON species_by_city.city = max_species_by_city.city
+--WHERE species_by_city.total = max_species_by_city.max_total;
 
 --species_by_city  ->  todas las especies por ciudad con su total--
 
